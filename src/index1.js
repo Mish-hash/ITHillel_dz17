@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+
+
 const mimeTypes = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -23,12 +25,23 @@ const mimeTypes = {
 
 function apiHandler (request, response) {
   if (request.method === 'GET') {
+
     response.writeHead(200, mimeTypes['.json']);
     response.end(JSON.stringify({
       test: 'hello world'
     }, 'utf-8'));
+  } else if (request.method === 'POST') {
+    response.writeHead(200, mimeTypes['.json']);
+
+    request
+    .on('data', chunk => {
+      const chunkStr = chunk.toString('utf8');
+      const body = JSON.parse(chunkStr)
+      response.end(JSON.stringify(body, 'utf-8'));
+      console.log(body)
+    })
   } else {
-    console.log(request.body);
+
     response.writeHead(200, mimeTypes['.json']);
     response.end(JSON.stringify({
       test: 'hello world'
